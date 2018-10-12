@@ -1,0 +1,2030 @@
+#+TITLE:     Getting Started with Google Kubernetes Engine - Coursera Course
+#+AUTHOR:    Scott Van Gilder 
+#+EMAIL:     svangilder@gmail.com
+
+* Introduction to Containers
+
+**** What are Containers
+
+Before managing complete applications with Kubernetes and Container Engine, you'll want to know how containers work and what advantages they provide. If you were to build an online retail application with user sign in, inventory management, billing and shipping, you could break up your application into these modules. Each requiring a number of software instances and running on a number of machines to scale. They may have their own hardware and software requirements to run and scale properly such as operating system, RAM, CPU, disk, networking, and even software dependencies. Instead of writing these requirements in code, you can declare them outside your code in configuration files called containers for easy management. This module steps back, describes how applications evolved into containers. We explain why it's important to run a nicely containers using virtualized operating systems. This also lays the groundwork for you to set up continuous delivery of your applications in different environments like development, staging and production, and into reconfigurations. Also allows you to dig deeper into the details of your applications as they become more sophisticated. Welcome. My name is Raul Lozano. This is an introduction to containers and Dockers. Let's get started. Looking back in the old days, how applications were built on the individual bare-metal servers, usually had to install the hardware, you had to install a OS or a kernel, on top of that you had all these dependencies that you installed also. And then after that you installed the application code. Even after doing all that, it usually became really hard to keep the application dependencies and everything in sync. So, VMware came up with a way to hypervise your hardware, in other words decouple your hardware from your kernel, from your dependencies, and from your application. So, they developed a hardware hypervisor layer, that sort of decoupled the application itself, like I said, everything above the hardware liberated it. That was one abstraction level. But we had a problem back then. Problem is that you cannot install the same application or multiple versions of the same application into one single VM, one single virtual machine. If you do that, you have dependency errors, you have conflicts and so forth. So, the answer back in the old days again is that create more virtual machines. So yes, sometimes you would have this scenario here where you have multiple virtual machines, many, many virtual machines probably running even the same instance or the same version of the same application, but the reason is you could not run them all on one virtual machine due to the dependencies. So, it was costly, ineffective, and hardware ineffective also. Finally, what we see right now is a different level of abstraction. We have decoupled with VM and hypervisor the hardware layer on the bottom as you see in the right hand side, then with the kernel and container runtime in a container, we have decoupled that completely from any dependency in any application. The good thing about this, it's portable, it's very efficient, its inside that has no dependencies again on the kernel or the hardware itself. Why developers like this? Well, couple reasons. First of all, you could develop a cross test and in production at the same time. You could also run this on bare-metal, virtual machines, or on the cloud. It could be packaged spread across speed of development, agile creation of development, and continuous integration and delivery. Also, you could have single file copy or single instance storage for some of us. This provides a path to microservices: Introspec, isolated, and elastic, all at the same time. Quick look at history. Back in 2004, we had that limited isolation of yes you have these applications, but they're all running in separate VMs, or separate groups, or separate entities themselves, whatever the hypervisor technology was. In 2006, Google created a very, very important technology called consistency groups. Consistency groups basically use containers to manage these applications and keep them consistent. 2013, Docker became really, really popular, everybody's been using Docker now, and as you can see, Docker really releases that layer again, the Dockerfile file provides that layer of decoupling with the applications or the base OS itself. And on top of that, all that you see is a container layer. And at the left here, you will see a Dockerfile, it's just an explanation of the Docker, the runtime and the command itself, very simple. Containers really promote small shared images. That's the whole key in the whole let's say Google magic if you want to say it that, behind the containers. Really they isolate the OS which is the bulkiest part, they isolate a lot of the dependencies from the container and from the actual applications themselves. 
+
+* Introduction to Docker
+
+**** What is Docker
+So let's continue talking about containers and Dockers. In part two here, we'll describe a little bit more about Dockers themselves. Docker adoption has gone sky high. Basically, they've gone, it's a line straight up from when they released in around 2013. It's a massive adoption in the market today. It's up to about 40% in one year Docked adoption itself. So, containers are not going away. On the contrary, containers are becoming very, very big containerize it with Dockers. Shows you a little bit of an example, Docker build minus t with a py web-server. Basically, a little Docker file that lets your application run inside a Docker container and pull out some of the images themselves. Here in the real world, what you'll do is you'll push, or pull your images from a registry itself. Here's an example, shows you a registry, the IP shows you where it is, the project number, the port number, and et cetera. You could push it or get it from that registry and then you could run that py script to get your Docker of container. Why containers are the packaging format of the feature themselves? OK. First of all, they're efficient, they're portable. App Engine supports Docker containers in a custom runtime. Google Container Registry provides a registry to host many, many Docker images, including CI and CD integration images. And also, the Compute Engine supports containers, including managing instance groups with Docker containers. One of the most powerful choices in container orchestration. And now, we'll go into the lab. This lab introduces you to containers. You'll learn how to build, run, and distribute a simple web server and web application as a self-contained Docker image. Remember, containers isolate programs from each other and the underlying OS, they enable you to move them across systems without reconfiguration. Behind the scenes, containers use low-level operating system constructs to put a shell around your application. With the shell, you can specify unique system users, host names, IP addresses, RAM and CPU quotas, and file system segments. Everything you need to define the server in which the container runs. But it's easier to start using containers without being familiar with the technology that makes them work. Later, when you want to configure more complex applications with many containers, you'll want to control these shells with more precision. But for now, it's enough to build and run and distribute a simple container. 
+
+* LAB 1: Introduction to Containers and Docker
+
+** Lab: Introduction to Containers and Docker
+
+*** Overview
+Containers are a way of isolating programs or processes from each other. The primary aim of containers is to make programs easy to deploy in a way that doesn't cause them to break.
+
+It's easy to start using containers without being familiar with the technology that makes them work.
+
+In this lab, you learn how to build, run, and distribute an application as a Docker image.
+
+*** Setup
+**** Step 1
+For each lab, you get a new GCP project and set of resources for a fixed time at no cost.
+
+Note the lab's access time (for example, 02:00:00) and make sure you can finish in that time block.
+
+There isn't a pause feature, so the clock keeps running. You can start again if needed.
+
+When ready, click Start Lab.
+Note your lab credentials. You will use them to sign in to Cloud Platform Console.
+Click Open Google Console.
+Click Use another account if displayed.
+IMPORTANT : Only use lab credentials for THIS lab. Do NOT use previous lab credentials or personal Google or Gmail credentials. Using previous lab credentials generates a permission error. Using personal Google or Gmail credentials incurs charges.
+
+Copy and paste your Qwiklabs username and password for this lab into the prompts.
+Accept the terms and skip the recovery resource page.
+IMPORTANT : Do not click End unless you are finished with the lab. This clears your work and removes the project. It's not a pause button.
+
+**** Step 2
+
+In your project, you have a pre-provisioned VM running Ubuntu Xenial and the necessary tools pre-installed. To connect to it:
+
+Click the Navigation menu icon (top-left).
+
+Select Compute > Compute Engine > VM Instances.
+
+Your instance is listed as k8s-workshop-module-1-lab.
+
+To the right of the instance, click the SSH drop-down arrow and select Open in browser window. You may need to hide the Info Panel on the right to see the drop-down.
+
+This opens another window, copies SSH keys to the host, and logs you in.
+
+**** Step 3
+Make sure the instance is fully provisioned. To do this, run the following command and look for the kickstart directory.
+#+BEGIN_SRC bash
+ls /
+#+END_SRC
+
+If the directory is not there, give the instance a few minutes to get fully provisioned before continuing. We've seen it take up to 8 minutes sometimes.
+
+*** Run and Distribute Containers With Docker
+Docker provides a simple means to package applications as containers with a repeatable execution environment.
+
+Explore Docker by creating and running a simple Docker container image that includes a web server written in Python, upload it to a Docker registry, and share it with everyone so it can be run anywhere that supports Docker.
+
+In this lab, you learn how to:
+
+- Add a user to the Docker group.
+- Build a Docker image.
+- Push a Docker image to Google Cloud Registry.
+- Run a Docker container.
+
+**** Add the signed-in user to the Docker group
+This step isn't required by all projects, but is for this lab.
+
+It allows you to run Docker commands as the current user and use `gcloud` as the credential helper for Docker when you want to push containers to a Google-supported registry as that user.
+
+**** Step 1
+Add the current user to the Docker user group.
+#+BEGIN_SRC bash
+sudo usermod -aG docker $USER
+#+END_SRC
+
+**** Step 2
+Exit the SSH window.
+#+BEGIN_SRC bash
+exit
+#+END_SRC
+
+**** Step 3
+
+Return to Cloud Console and open a new SSH connection to your instance so the group changes take effect.
+
+*** Run the Web Server Manually
+To install and run even a simple web server, you will have dependencies like `apt` and `pypi` (Python) for deployment. Versions of dependencies frequently change, so it's useful to automate the process of getting the latest dependency versions at installation time.
+
+Run the web server manually to see the steps. Later, you will automate the process to run it on other machines.
+
+**** Step 1
+The source code for this lab is available in the `/kickstart` folder. List the contents of the directory.
+
+#+BEGIN_SRC bash
+cd /kickstart
+#+END_SRC
+
+#+BEGIN_SRC bash
+ls -lh
+#+END_SRC
+
+You should see a `Dockerfile` and `web-server.py`. web-server.py is a simple Python application that runs a web server which responds to HTTP requests on localhost:8888 and outputs the hostname.
+
+**** Step 2
+Install dependencies.
+
+Install the latest version of Python and PIP.
+
+#+BEGIN_SRC bash
+sudo apt-get install -y python3 python3-pip
+#+END_SRC
+
+Install Tornado library that is required by the application.
+
+#+BEGIN_SRC bash
+pip3 install tornado
+#+END_SRC
+
+**** Step 3
+
+Run the Python application in the background.
+
+#+BEGIN_SRC bash
+python3 web-server.py &
+#+END_SRC
+
+**** Step 4
+
+Ensure that the web server is accessible.
+
+#+BEGIN_SRC bash 
+curl http://localhost:8888
+#+END_SRC
+
+The response should look like this:
+
+`Hostname: k8s-workshop-module-1-lab`
+
+**** Step 5
+
+Terminate the web server.
+
+#+BEGIN_SRC bash
+kill %1
+#+END_SRC
+
+*** Package Using Docker
+Now, see how Docker can help. Docker images are described via Dockerfiles. Docker allows the stacking of images. Your Docker image will be built on top of an existing Docker image library/python that has Python pre-installed.
+
+**** Step 1
+Look at the Dockerfile.
+#+BEGIN_SRC bash
+cat Dockerfile
+#+END_SRC
+
+**** Step 2
+Build a Docker image with the web server.
+
+The image is stored in the local image store.
+#+BEGIN_SRC bash
+docker build -t py-web-server:v1 .
+#+END_SRC
+Be sure to include the '.' at the end of the command. This tells Docker to use the Docker file in the current working directory.
+
+**** Step 3
+Run the web server using Docker.
+#+BEGIN_SRC bash
+docker run -d -p 8888:8888 --name py-web-server -h my-web-server py-web-server:v1
+#+END_SRC
+**** Step 4
+Try accessing the web server again, and then stop the container.
+#+BEGIN_SRC bash
+curl http://localhost:8888
+#+END_SRC
+#+BEGIN_SRC bash
+docker rm -f py-web-server
+#+END_SRC
+
+The web server and all its dependencies, including the python and tornado library, have been packaged into a single Docker image that can now be shared with everyone. The py-web-server:v1 docker image functions the same way on all Docker supported OSes (OS X, Windows, and Linux).
+
+*** Upload the Image to a Registry
+The Docker image needs to be uploaded to a Docker registry to be available for use on other machines. Upload the Docker image to your private image repository in Google Cloud Registry (gcr.io).
+
+**** Step 1
+Store your GCP project name in an environment variable.
+#+BEGIN_SRC bash
+export GCP_PROJECT=`gcloud config list core/project --format='value(core.project)'`
+#+END_SRC
+**** Step 2
+Rebuild the Docker image and tag it with its future registry name that includes gcr.io as the hostname and the project ID as a prefix.
+#+BEGIN_SRC 
+docker build -t "gcr.io/${GCP_PROJECT}/py-web-server:v1" .
+#+END_SRC
+Again, be sure to include the '.' at the end of the command. This tells Docker to use the Docker file in the current working directory.
+
+*** Make the Image Publically Accessible
+Google Container Registry stores its images on Google Cloud storage.
+
+**** Step 1
+Configure Docker to use gcloud as a credential helper and allow you to upload containers to the registry as the current user.
+
+The lab instance also needs the location of gcloud-credential-docker manually added to its PATH (this is usually done automatically for you when you install gcloud).
+#+BEGIN_SRC bash
+PATH=/usr/lib/google-cloud-sdk/bin:$PATH
+
+gcloud auth configure-docker
+#+END_SRC
+
+**** Step 2
+Push the image to gcr.io.
+#+BEGIN_SRC bash
+docker push gcr.io/${GCP_PROJECT}/py-web-server:v1
+#+END_SRC
+**** Step 3
+To see the image stored as a bucket (object) in your Google Cloud Storage repository, click the Navigation menu icon and select Storage.
+
+
+
+You should see an image like the following:
+
+**** Step 4
+Update the permissions on Google Cloud Storage to make your image repository publically accessible.
+#+BEGIN_SRC bash
+gsutil defacl ch -u AllUsers:R gs://artifacts.${GCP_PROJECT}.appspot.com
+#+END_SRC
+#+BEGIN_SRC bash
+gsutil acl ch -r -u AllUsers:R gs://artifacts.${GCP_PROJECT}.appspot.com
+#+END_SRC
+#+BEGIN_SRC bash
+gsutil acl ch -u AllUsers:R gs://artifacts.${GCP_PROJECT}.appspot.com
+#+END_SRC
+The image is now available to anyone who has access to your GCP project.
+
+*** Run the Web Server From Any Machine
+The Docker image can now be run from any machine that has Docker installed by running the following command.
+#+BEGIN_SRC bash
+docker run -d -p 8888:8888 -h my-web-server gcr.io/${GCP_PROJECT}/py-web-server:v1
+#+END_SRC
+
+You can test it on your VM instance (re-using the curl command from above).
+
+To learn more about Dockerfiles, look at this reference.
+https://docs.docker.com/engine/reference/builder/
+
+To know more about Docker images, look at this reference.
+https://docs.docker.com/storage/storagedriver/
+
+To learn more about registering gcloud as a Docker credential helper, look at this reference.
+https://cloud.google.com/sdk/gcloud/reference/auth/configure-docker
+
+Exit the SSH session and return to Cloud Console.
+#+BEGIN_SRC bash
+exit
+#+END_SRC
+End the lab
+
+Congratulations!
+
+You learned how Docker containers are built, run, and shared in registries.
+
+
+* Quiz & Summary 1: Containers and Dockers
+
+** What are advantages of containers versus virtual machines?
+- They do not share parts of the OS or common dependencies so they can be ported anywhere.
+- They share common dependencies across containers, so they require less storage and start faster.
+- [They share parts of the OS, but not common dependencies, so they start fast and can run anywhere with the same kernel.] 
+
+** Which types of actions can you perform in a container Dockerfile?
+- [CMD - what command to run in the container]
+- BUILD - to build the container
+- [FROM - creates a layer a Docker image]
+- START - to start the container
+
+** What is the default hostname to publish a Docker image to the Google Registry?
+- google.cr
+- content.reg
+- content.cr
+- [gcr.io]
+
+** Summary
+In this module, you learned how applications evolved into containers, which low-level constructs they used to achieve isolation, and operating system abstraction, and how to configure a simple application as a container. In the next module, you'll see how to manage applications and Kubernetes that provide built-in redundancy and automatically scale and restart containers or machines if they fail. 
+
+
+* Clusters, Nodes, and Pods
+
+**** Clusters, Nodes, and Pods
+As you saw earlier, containers allow you to break up applications into modules with hardware, software, and operating system requirements. You can run them on the same or even different machines and start and stop them quickly, but you can't specify how many machines or containers to keep running, what to do if they fail, or how to connect them to other containers and persistent storage? For that, you need a container orchestration system like Kubernetes. Kubernetes adds the ability to define how many machines to run, how many containers to deploy, how to scale them, where persistent disks reside, and how to deploy a group of containers as a unit. In this module, you'll learn how to set up and use Kubernetes and container engine to manage a set of machines and containers, and group them into services for hosting real world applications. Kubernetes Basics: Clusters, nodes, and pods. So, let's give you a 10,000-foot view of Kubernetes itself. You have the users on the left hand side, then you have this master cluster server. Kubernetes and the way it really runs and Dockers and containers, it's a new cluster environment. And then you have all these nodes out there which are running kubelets. The kubelet is a Kubenetes agent and self. And the master, what it does it controls all the jobs, it controls the scheduling, it controls the etcd, the apiserver itself. Just to be very clear. Kubernetes is an open source orchestrator for a container environment. And what does it really do? What does it provide those developer? So, developers only really care about access to the API. That's all they really care. And Kubernetes and containers provide them that access to that open API so they can program. And like I said, a cluster is a set of computers that works is an instance that manages all these nodes. Everything is managed by Kubernetes which is an orchestrator again. And really if you get to the meat of the matter, Kubernetes manages jobs. It knows how to delegate these jobs to these multiple nodes and this is a better example of a real Kubernetes ecosystem. It's not usually one, two, or three nodes, it's thousands of nodes and many multiple masters. But the whole beauty of the system is, it knows how to allocate jobs to these nodes, which are free on resources, or remove the task from nodes, which are high on resources. So, let's talk about a pod. A pod is analogous to a VM, sort of, in a group of containers sharing a network and storage that are separated from the nodes themselves. Underneath, you have the OS, you have the hardware, you have the NIC, you have an IP outside, inside you have the pod, and then inside the pod, you have the actual containers, and then the network interfaces for the containers. You can define a pod with a YAML file. Here's an example. It'll give you the version of the YAML file, it gave you the metadata, the name is going to be my-app, the containers, the images, it'll tell you what image it's going to use, and then obviously how you're going to access that containerPort 80 and port 443. You'll upload the YAML file to the master cluster server, and then it will create pods on the nodes that you have dedicated within the YAML file. A pod is composed of several parts. For example, number one, the API version, the pod resource, the pod name, also two containers, and then finally, the front end. What's it going to use? What application will it be running? And then, the ports that application will be running on. The deployment also ensures that N pods are running in a cluster at any given time. Basically, automatic fail over. If anything happens, if any one of the pod goes down, Kubernetes has the ability to spin up another pod and replace it. You could define in a YAML file also how many replicas you want. You could identified the pods, the rolls, also the labels, and labels are important. We'll talk about those later on in the course, but also, what is it. Container equals pod. Again, you upload the new YAML file and upload the master, the master then schedules and decides. Remember, the master is running Kubernetes. It is deciding these jobs and these tasks when they're going to be run. So, scheduling it depending on the master and depending on the workload and everything else happening, including CPU utilization. 
+
+**** screen1
+
+* Services, Labels, and Selectors
+
+**** Services, Labels, and Selectors
+
+     Kubernetes basics. Talking about services, labels, and selectors. All right, so a service is assigned to a fixed IP to your pod and then it replicates and allows other pods and other services to communicate with them. Services really act like a way of communication between the pods, okay? Number one, the cluster has an IP, an internal IP, and the port nodes also have awareness of that access to that IP. It also uses a load balancer as a bounds for that browsing that traffic that comes into the nodes themselves. You're going to have multiple services with different configurations and features running. Usually, the front end is either a web server, application server, some kind of server, back ends are usually the nodes and maybe a database server. They run with usually a load balancer, Google Cloud load balancer, which will let you detailed what GCP API you use. Again, a definition in YAML file will tell you the resources, the pods you'll be using, and then the pod selector, and then the type of load balancer you'll be applying to this. Labels are metadata that you can assign to any API object and represent an identity. They are used for grouping, mechanisms, searching, but not only that, they're using pre-filtering, finding something. Pods could contain a lot of entities and containers that could be in many, many containers in your environment. By labeling them logically, you'll be able to quickly find them and not only that, per mechanisms inside the pods to quickly identify them. In this example, you have four pods and three labels, so my application, my application, my application, my application, but notice the labels, one is prod, one is test, there's another for tests, there's another prod, and then you have different roles underneath each. That way, not only is it a way of segregating for reporting, but it's also a way of mechanizing and orchestrating the container environment itself. You could query, you could find labels, like I said, when you need to find something in 9,000 containers, it's going to be very handy to have a label. And you could also use it to map the entire application to that label itself. So, app label equals all my applications. So an easy way to again group all your applications. Or narrow your search, like I said. Trying to find a needle in the haystack of a thousand containers could be very challenging. With tags and labels, it could be made very, very easy. You'll be able to similarly apply labels for your back end services also. This is my BE server, this is my back end server, my database, whatever. Or, your applications test phase. Call it test. Here you go. Both of them are test, you could group them together, and you could have a red and blue or green, yellow application. We'll talk about those later on. But it's a way again of testing your application in an environment without disrupting anything in production again. And then on your production release, like I said, make the same changes. You could label these, and understand that labeling is just an example right here that we're showing you, but it's really an example and it's really a logical way of managing Kubernetes. Kubernetes also checks whether your pod is alive or healthy. If it gets a negative response, or no reply, it's unhealthy. In other words, if I'm knocking on your door and you don't open that door, I'm going to call the police, have not come on in and probably maybe rescue, because I know there's something wrong. Kubernetes has that unhealthy environment already built in. I call it, a.k.a. Doctor in a can. Kubernetes then automatically restarts the pod if it needs restarts to see that, if everything comes up bright. And if everything is good, it goes back into a healthy state. Doctors not needed any longer, pod is up and running. 
+
+* Volumes 
+
+**** Volumes
+Okay, let's talk about Kubernetes basics. Let's talk about the volumes now. So docker provides data storage for containers, right? You've got to put your data somewhere, you have to have storage. But volumes do not provide shared between all containers, or a lifecycle management either. It's very important, but lifecycle management in data is an important topic that we all talk about these days. Anyway so, dockers now provides volume driven, okay? Not shown in the slide here but volume-driven host and remaining persistent volumes. And we'll show you those in the coming slides. Okay? So Kubernetes, volumes allow containers in part to share data, and to be stateful. A volume is just a directory. And how it gets created depends on the type. Here is an example, kubectl. I call it that. Okay? Create volume, and that's all, you run that out of Kubernetes line itself command line, and it'll create a volume. Here's another one that will create a volume that consumes that data, so again kubectl create -f pod, which is the YAML file created depending on the YAML description. The volume is attached to the pod, and made available to the containers before they are brought online. So you have that storage there before the containers are brought online. We want to be able to have storage available in case it already has to purchase something, or has to relocate something, or put something in that container as it comes up, or during the process of it coming up maybe logs. Once the volume is attach, and you could see here mnt/vol, which is the Unix equivalent mounting a volume, the data can be mounted into that container file system. Then the container is run, and it can get the mounted data from that volume itself. And some volumes can be shared. The lifecycle of the pod itself, in other words they'll stay around as long as that pod is around. And see you have here also on the bottom the configuration map and the secret map. Let's talk a little bit about the secret stores and all the sensitive information, the encryption information, the passwords, the keys, stores a lot of information in there, and the config maps are basically stubby differential maps, they are used for sharing string data, strong configuration, making sure everything and all the pieces are put together and are working basically at the ConfigMap. Here's a complete overview of a cluster. So you have kubectl, that's a guy sitting in the blue guy at the left-hand side, there's the Blue Man Group. Okay? Have a couple applications, application one and application two. Then you have the app server, it could be anything, okay? It could be a web server. Okay? And then you have the networking services on the top, and as you go towards the right, you'll see the different nodes with the pods inside. So you'll have a pod with a kubelet in it, running a green and yellow, which are two different applications inside one node. Okay? This is what we're talking about, these are the advantages Kubernetes. Again same thing over and over again. You could also have nodes that are running no pods at all, being a standby or just hanging there if you need them. Okay? As a backup. And you could have pods like on the bottom, which are running on a single node. So it could be multiple or it could be one for that matter. At the end, far right, you finally have your data storage services where everything goes. All your data is stored. Now it's time to use Google container engine and Kubernetes to deploy, manage, and update a sample application. It's a modern web-based application called a 12-Factor app. That's well-suited for being built using containers. It includes modules for user authentication, back-end data retrieval, and a web front-end. It's based on several docker images, one that includes authentication and greeting services, two micro services and an Nginx web front-end. You'll provision it's resources such as pods, services, and volumes, and split them into micro services, and scale and test them. 
+
+* LAB 2: Kubernetes Basics
+
+** Lab: Kubernetes Basics
+*** Overview
+In this lab, you learn how to:
+
+Provision a Kubernetes https://kubernetes.io/ cluster using Google Kubernetes Engine https://cloud.google.com/kubernetes-engine/.
+Deploy and manage Docker containers using kubectl.
+Split an application into microservices using Kubernetes' Deployments and Services.
+You use Kubernetes Engine and its Kubernetes API to deploy, manage, and upgrade applications. You use an example application called "app" to complete the labs.
+
+App is hosted on GitHub. It's a 12-Factor application with the following Docker images:
+https://github.com/kelseyhightower/app
+forked to https://github.com/ScottyVG/app
+
+kelseyhightower/monolith: Monolith includes auth and hello services.
+https://hub.docker.com/r/kelseyhightower/monolith/
+kelseyhightower/auth: Auth microservice. Generates JWT tokens for authenticated users.
+https://hub.docker.com/r/kelseyhightower/auth/
+kelseyhightower/hello: Hello microservice. Greets authenticated users.
+https://hub.docker.com/r/kelseyhightower/hello/
+ngnix: Frontend to the auth and hello services.
+https://hub.docker.com/_/nginx/
+
+*** Setup
+**** Step 1
+Make sure you have enough time to complete the lab, and click  .
+
+Click Open Google Console, and sign in with your Qwiklab credentials.
+
+IMPORTANT: Do not use previous lab credentials or personal Google or Gmail credentials or you will encounter errors or significant charges.
+
+**** Step 2
+Make sure the following APIs are enabled in Cloud Platform Console:
+
+- Google Kubernetes Engine API
+- Google Container Registry API
+
+To enable APIs, click the Products & Services menu icon  .
+
+Click APIs & services.
+
+Scroll down and confirm your APIs are enabled.
+
+If an API is missing, click ENABLE APIS AND SERVICES at the top, search for the API by name, and enable it for your project.
+
+**** Step 3
+Open a tool in Google Cloud Platform called Cloud Shell.
+
+It's a VM with dev tools and a command-line interface to Cloud Platform called gcloud.
+
+From Cloud Platform Console, click the top right icon to activate Cloud Shell:
+
+
+Click Start Cloud Shell.
+
+After a moment of provisioning, you'll get a prompt like the following:
+
+
+Run the following commands to see your preset account and project. When you create resources using gcloud, this is where they get stored.
+#+BEGIN_SRC bash
+gcloud config list account
+
+gcloud config list project
+#+END_SRC
+Look for an assigned zone on your lab page as shown. You may or may not have one.
+
+
+Run a command like the following to set your zone.
+
+Substitute your assigned zone for <your-zone> if you have one. Otherwise, use a zone close to you for low latency.
+#+BEGIN_SRC bash
+gcloud config set compute/zone <your-zone>
+#+END_SRC
+Run the following command to see all variables set.
+#+BEGIN_SRC bash
+gcloud config list
+#+END_SRC
+**** Step 4
+Get the sample code from the Git repository.
+#+BEGIN_SRC bash
+git clone https://github.com/googlecodelabs/orchestrate-with-kubernetes.git
+#+END_SRC
+**** Step 5
+Review the app layout.
+#+BEGIN_SRC bash
+cd orchestrate-with-kubernetes/kubernetes
+
+ls
+#+END_SRC
+
+You'll see the following structure.
+
+|              |                      |
+|--------------+----------------------|
+| deployments/ | Deployment manifests |
+| nginx/       | nginx config files   |
+| pods/        | pod manifests        |
+| services/    | Services manifests   |
+| tls/         | TLS certificates     |
+| cleanup.sh   | Cleanup script       |
+|              |                      |
+
+
+
+
+Now that you have the code, it's time to try Kubernetes.
+
+*** A quick demo of Kubernetes
+Start a Kubernetes cluster
+**** Step 1
+In Cloud Shell, run the following command to start a Kubernetes cluster called bootcamp that runs 5 nodes.
+#+BEGIN_SRC bash
+gcloud container clusters create bootcamp --num-nodes 5 --scopes "https://www.googleapis.com/auth/projecthosting,storage-rw"
+#+END_SRC
+The scopes argument provides access to project hosting and Google Cloud Storage APIs that you'll use later.
+
+It takes several minutes to create a cluster as Kubernetes Engine provisions virtual machines for you.
+
+**** Step 2
+After the cluster is created, check your installed version of Kubernetes using the kubectl version command.
+#+BEGIN_SRC 
+kubectl version
+#+END_SRC
+The gcloud container clusters create command automatically authenticated kubectl for you.
+
+**** Step 3
+Use kubectl cluster-info to find out more about the cluster.
+#+BEGIN_SRC 
+kubectl cluster-info
+#+END_SRC
+**** Step 4
+View your running nodes in Cloud Platform Console.
+
+Open the Products & Services menu and go to Compute Engine > VM Instances.
+
+Congratulations! Your Kubernetes cluster is now ready for use!
+
+*** Bash Completion (Optional)
+Kubernetes comes with auto-completion. You can use the kubectl completion https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#completion/ command and the built-in source command to set this up.
+
+**** Step 1
+Run this command.
+#+BEGIN_SRC bash
+source <(kubectl completion bash)
+#+END_SRC
+**** Step 2
+Press Tab to display a list of available commands. Try the following examples:
+#+BEGIN_SRC bash
+kubectl <TAB><TAB>
+#+END_SRC
+
+You can also complete a partial command.
+#+BEGIN_SRC bash 
+kubectl co<TAB><TAB>
+#+END_SRC
+
+This feature makes using kubectl even easier.
+
+*** Run and deploy a container
+The easiest way to get started with Kubernetes is to use the kubectl run command.
+
+**** Step 1
+Use kubectl run to launch a single instance of the nginx container.
+#+BEGIN_SRC bash
+kubectl run nginx --image=nginx:1.10.0
+#+END_SRC
+In Kubernetes, all containers run in pods. And in this command, Kubernetes created what is called a deployment behind the scenes, and runs a single pod with the nginx container in it. A deployment keeps a given number of pods up and running even when the nodes they run on fail. In this case, you run the default number of pods, which is 1.
+
+You'll learn more about deployments later.
+
+**** Step 2
+Use the kubectl get pods command to view the pod running the nginx container.
+#+BEGIN_SRC bash
+kubectl get pods
+#+END_SRC
+**** Step 3
+Use the kubectl expose command to expose the nginx container outside Kubernetes.
+#+BEGIN_SRC bash
+kubectl expose deployment nginx --port 80 --type LoadBalancer
+#+END_SRC
+Kubernetes created a service and an external load balancer with a public IP address attached to it (you will learn about services later). The IP address remains the same for the life of the service. Any client who hits that public IP address (for example an end user or another container) is routed to pods behind the service. In this case, that would be the nginx pod.
+
+**** Step 4
+Use the kubectl get command to view the new service.
+#+BEGIN_SRC 
+kubectl get services
+#+END_SRC
+You'll see an external IP that you can use to test and contact the nginx container remotely.
+
+It may take a few seconds before the ExternalIP field is populated for your service. This is normal—just re-run the kubectl get services command every few seconds until the field is populated.
+
+**** Step 5
+Use the kubectl scale command to scale up the number of backend applications (pods) running on your service using.
+#+BEGIN_SRC bash
+kubectl scale deployment nginx --replicas 3
+#+END_SRC
+This is useful when you want to decrease workload for a web application that is becoming more popular.
+
+**** Step 6
+Get the pods one more time to confirm that Kubernetes has updated the number of pods.
+#+BEGIN_SRC 
+kubectl get pods
+#+END_SRC
+**** Step 7
+Use the kubectl get services command again to confirm that your external IP address has not changed.
+#+BEGIN_SRC bash
+kubectl get services
+#+END_SRC
+**** Step 8
+Use the external IP address with the curl command to test your demo application.
+#+BEGIN_SRC bash
+curl http://<External IP>:80
+#+END_SRC
+Kubernetes supports an easy-to-use workflow out of the box using the kubectl run, expose, and scale commands.
+
+*** Clean Up
+Clean up nginx by running the following commands.
+#+BEGIN_SRC bash
+kubectl delete deployment nginx
+#+END_SRC
+#+BEGIN_SRC bash
+kubectl delete service nginx
+#+END_SRC
+Now that you've seen a quick tour of Kubernetes, it's time to dive into each of the components and abstractions.
+
+You covered a lot of information. The rest of this lab goes over these concepts in depth. You can always come back to this demo if you need to see it again.
+
+*** Pods
+Investigate pods in more detail.
+
+Creating Pods
+Pods can be created using pod configuration files.
+
+**** Step 1
+Explore the built-in pod documentation using the kubectl explain command.
+#+BEGIN_SRC bash
+kubectl explain pods
+#+END_SRC
+While you explore the Kubernetes API, kubectl explain will be one of the most common commands you use. Note how you used it above to investigate an API object and how you will use it below to check on various properties of API objects.
+
+**** Step 2
+Explore the monolith pod's configuration file.
+#+BEGIN_SRC bash
+cat pods/monolith.yaml
+#+END_SRC
+The pod is made up of one container (called monolith). You pass a few arguments to the container when it starts up and open port 80 for HTTP traffic.
+
+**** Step 3
+Use the kubectl explain command with the .spec option to view more information about API objects. This example inspects containers.
+#+BEGIN_SRC bash
+kubectl explain pods.spec.containers
+#+END_SRC
+Explore the rest of the API before you continue.
+
+**** Step 4
+Create the monolith pod using kubectl create.
+#+BEGIN_SRC bash
+kubectl create -f pods/monolith.yaml
+#+END_SRC
+**** Step 5
+Use the kubectl get pods command to list all pods running in the default namespace.
+#+BEGIN_SRC bash
+kubectl get pods
+#+END_SRC
+It may take a few seconds before the monolith pod is up and running, because the monolith container image must be pulled from the Docker Hub before you can run it.
+
+**** Step 6
+When the pod is running, use the kubectl describe command to get more information about the monolith pod.
+#+BEGIN_SRC bash
+kubectl describe pods monolith
+#+END_SRC
+You'll see a lot of the information about the monolith pod, including the pod IP address and the event log. This information will be useful when troubleshooting.
+
+It's time for a quick knowledge check. Answer the following questions about the monolith pod.
+
+***** What is the pod IP address?
+10.48.2.6
+***** Which node is the pod running on?
+gke-bootcamp-default-pool-bdd7f103-pczm/10.128.0.6
+***** Which containers are running in the pod?
+monolith:
+    Container ID:  docker://7e7485e0f640f6262dec509a00042c314c27b9e731163f537351e6217d4db10e
+    Image:         kelseyhightower/monolith:1.0.0
+    Image ID:      docker-pullable://kelseyhightower/monolith@sha256:72c3f41b6b01c21d9fdd2f45a89c6e5d59b8299b52d7dd0c9491745e73db3a35
+    Ports:         80/TCP, 81/TCP
+    Args:
+      -http=0.0.0.0:80
+      -health=0.0.0.0:81
+      -secret=secret
+    State:          Running
+      Started:      Tue, 26 Jun 2018 15:05:22 -0600
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     200m
+      memory:  10Mi
+    Requests:
+      cpu:        200m
+      memory:     10Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-lvgbs (ro)
+***** Which labels are attached to the pod?
+app=monolith
+***** Which arguments are set on the container?
+Args:
+      -http=0.0.0.0:80
+      -health=0.0.0.0:81
+      -secret=secret
+As you can see, Kubernetes makes it easy to create pods by describing them in configuration files and to view information about them when they are running. At this point, you can create all the pods your deployment requires!
+
+*** Interacting with pods
+Pods are allocated a private IP address by default that cannot be reached outside of the cluster. Use the kubectl port-forward command to map a local port to a port inside the monolith pod.
+
+Use two terminals: one to run the kubectl port-forward command, and the other to issue curl commands.
+
+**** Step 1
+Click the + button in Cloud Shell to open a new terminal.
+
+**** Step 2
+Run the following command to set up port-forwarding from a local port, 10080, to a pod port, 80 (where your container is listening).
+#+BEGIN_SRC bash
+kubectl port-forward monolith 10080:80
+#+END_SRC
+**** Step 3
+To access your pod, return to the first terminal window and run the following curl command.
+#+BEGIN_SRC bash
+curl http://127.0.0.1:10080
+#+END_SRC
+You get a friendly "hello" back from the container.
+
+**** Step 4
+See what happens when you hit a secure endpoint.
+#+BEGIN_SRC bash
+curl http://127.0.0.1:10080/secure
+#+END_SRC
+You should get an error.
+
+You get an error because you need to include an auth token in your request.
+
+**** Step 5
+Log in to get an auth token from monolith.
+#+BEGIN_SRC bash
+curl -u user http://127.0.0.1:10080/login
+#+END_SRC
+At the login prompt, enter the password as password to sign in.
+
+Logging in causes a JWT token to be printed out. You'll use it to test your secure endpoint with curl.
+
+**** Step 6
+Cloud Shell doesn't handle copying long strings well, so copy the token into an environment variable.
+#+BEGIN_SRC bash
+TOKEN=$(curl http://127.0.0.1:10080/login -u user|jq -r '.token')
+#+END_SRC
+At the login prompt, enter the password as password to sign in.
+
+**** Step 7
+Access the secure endpoint again, and this time include the auth token.
+#+BEGIN_SRC bash
+curl -H "Authorization: Bearer $TOKEN" http://127.0.0.1:10080/secure
+#+END_SRC
+You should get a response back from your application letting you know it works again!
+
+**** Step 8
+Use the kubectl logs command to view logs for the monolith pod.
+#+BEGIN_SRC bash
+kubectl logs monolith
+#+END_SRC
+**** Step 9
+Open another terminal and use the -f flag to get a stream of logs in real-time!
+
+To create the third terminal, click the + button in Cloud Shell and run the following command.
+#+BEGIN_SRC bash
+kubectl logs -f monolith
+#+END_SRC
+**** Step 10
+Use curl in terminal 1 to interact with monolith. And you see logs update in terminal 3.
+#+BEGIN_SRC bash
+curl http://127.0.0.1:10080
+#+END_SRC
+You can see the logs updating back in terminal 3.
+
+**** Step 11
+Use the kubectl exec command to run an interactive shell inside the monolith pod. This can be useful when you want to troubleshoot from within a container.
+#+BEGIN_SRC bash
+kubectl exec monolith --stdin --tty -c monolith /bin/sh
+#+END_SRC
+**** Step 12
+Optional: In the shell, you can test external (outward facing) connectivity using the ping command.
+#+BEGIN_SRC bash
+ping -c 3 google.com
+#+END_SRC
+**** Step 13
+Sign out of the shell.
+#+BEGIN_SRC bash
+exit
+#+END_SRC
+As you can see, interacting with pods is as easy as using the kubectl command. If you need to test a container remotely or get a login shell, Kubernetes provides everything you need to start.
+
+**** Step 14
+To quit kubectl port-forward and kubectl logs in terminal 2 and 3, press Ctrl+C.
+
+*** Monitoring and Health Checks
+Kubernetes supports monitoring applications in the form of readiness and liveness probes. Health checks can be performed on each container in a pod. Readiness probes indicate when a pod is "ready" to serve traffic. Liveness probes indicate whether a container is "alive." If a liveness probe fails multiple times, the container is restarted. Liveness probes that continue to fail cause a pod to enter a crash loop. If a readiness check fails, the container is marked as not ready and is removed from any load balancers.
+
+In this lab, you deploy a new pod named healthy-monolith, which is largely based on the monolith pod with the addition of readiness and liveness probes.
+
+In this lab, you learn how to:
+
+- Create pods with readiness and liveness probes.
+- Troubleshoot failing readiness and liveness probes.
+Creating Pods with Liveness and Readiness Probes
+**** Step 1
+Explore the healthy-monolith pod configuration file.
+#+BEGIN_SRC bash
+cat pods/healthy-monolith.yaml
+#+END_SRC
+**** Step 2
+Create the healthy-monolith pod using kubectl.
+#+BEGIN_SRC bash
+kubectl create -f pods/healthy-monolith.yaml
+#+END_SRC
+**** Step 3
+Pods are not marked ready until the readiness probe returns an HTTP 200 response. Use the kubectl describe command to view details for the healthy-monolith pod.
+#+BEGIN_SRC bash
+kubectl describe pod healthy-monolith
+#+END_SRC
+*** Readiness Probes
+See how Kubernetes responds to failed readiness probes. The monolith container supports the ability to force failures of its readiness and liveness probes. This enables you to simulate failures for the healthy-monolith pod.
+
+**** Step 1
+Use the kubectl port-forward command in terminal 2 to forward a local port to the health port of the healthy-monolith pod.
+#+BEGIN_SRC bash
+kubectl port-forward healthy-monolith 10081:81
+#+END_SRC
+**** Step 2
+Force the monolith container readiness probe to fail. Use the curl command to toggle the readiness probe status. Note that this command does not show any output.
+#+BEGIN_SRC bash
+curl http://127.0.0.1:10081/readiness/status
+#+END_SRC
+**** Step 3
+Get the status of the healthy-monolith pod using the kubectl get pods -w command.
+#+BEGIN_SRC bash
+kubectl get pods healthy-monolith -w
+#+END_SRC
+**** Step 4
+Press Ctrl+C when there are 0/1 ready containers. Use the kubectl describe command to get more details about the failing readiness probe.
+#+BEGIN_SRC bash
+kubectl describe pods healthy-monolith
+#+END_SRC
+**** Step 5
+Notice the events for the healthy-monolith pod report details about failing readiness probes.
+
+To force the monolith container readiness probe to pass, toggle the readiness probe status by using the curl command.
+#+BEGIN_SRC bash
+curl http://127.0.0.1:10081/readiness/status
+#+END_SRC
+**** Step 6
+Wait about 15 seconds and get the status of the healthy-monolith pod using the kubectl get pods command.
+#+BEGIN_SRC bash
+kubectl get pods healthy-monolith
+#+END_SRC
+**** Step 7
+Press Ctrl+C in terminal 2 to close the kubectl proxy (i.e port-forward) command.
+
+*** Liveness Probes
+Building on what you learned in the previous tutorial, use the kubectl port-forward and curl commands to force the monolith container liveness probe to fail. Observe how Kubernetes responds to failing liveness probes.
+
+**** Step 1
+Use the kubectl port-forward command to forward a local port to the health port of the healthy-monolith pod in terminal 2.
+#+BEGIN_SRC bash
+kubectl port-forward healthy-monolith 10081:81
+#+END_SRC
+**** Step 2
+To force the monolith container readiness probe to pass, toggle the readiness probe status by using the curl command in another terminal.
+#+BEGIN_SRC bash
+curl http://127.0.0.1:10081/healthz/status
+#+END_SRC
+**** Step 3
+Get the status of the healthy-monolith pod using the kubectl get pods -w command.
+#+BEGIN_SRC bash
+kubectl get pods healthy-monolith -w
+#+END_SRC
+**** Step 4
+When a liveness probe fails, the container is restarted. Once restarted, the healthy-monolith pod should return to a healthy state. Press Ctrl+C to exit that command when the pod restarts. Note the restart count.
+
+**** Step 5
+Use the kubectl describe command to get more details about the failing liveness probe. You can see the related events for when the liveness probe failed and the pod was restarted.
+#+BEGIN_SRC bash
+kubectl describe pods healthy-monolith
+#+END_SRC
+**** Step 6
+When you are finished, press Ctrl+C in terminal 2 to close the kubectl proxy command.
+
+Congratulations!
+
+You learned about Kubernetes pods and Kubernetes support for application monitoring using liveness and readiness probes. You also learned how to add readiness and liveness probes to pods and what happens when probes fail.
+
+*** Services
+Next steps:
+
+- Create a service.
+- Use label selectors to expose a limited set of pods externally.
+
+Creating a Service
+Before creating your services, create a secure pod with an nginx server called secure-monolith that can handle HTTPS traffic.
+
+**** Step 1
+Create two volumes that the secure pod will use to bring in (or consume) data.
+
+The first volume of type secret stores TLS cert files for your nginx server.
+
+Return to terminal 1 and create the first volume using the following command:
+#+BEGIN_SRC bash
+kubectl create secret generic tls-certs --from-file tls/
+#+END_SRC
+This uploads cert files from the local directory tls/ and stores them in a secret called tls-certs.
+
+Create the second volume of type ConfigMap to hold nginx's configuration file.
+#+BEGIN_SRC bash
+kubectl create configmap nginx-proxy-conf --from-file nginx/proxy.conf
+#+END_SRC
+This uploads the proxy.conf file to the cluster and calls the ConfigMap nginx-proxy-conf.
+
+**** Step 2
+Explore the proxy.conf file that nginx will use.
+#+BEGIN_SRC bash
+cat nginx/proxy.conf
+#+END_SRC
+The file specifies that SSL is ON and specifies the location of cert files in the container file system.
+
+The files really exist in the secret volume, so you need to mount the volume to the container's file system.
+
+**** Step 3
+Explore the secure-monolith pod configuration file.
+#+BEGIN_SRC bash
+cat pods/secure-monolith.yaml
+#+END_SRC
+Under volumes, the pod attaches the two volumes you created. And under volumeMounts, it mounts the tls-certs volume to the container's file system so nginx can consume the data.
+
+**** Step 4
+Run the following command to create the secure-monolith pod with its configuration data.
+#+BEGIN_SRC bash
+kubectl create -f pods/secure-monolith.yaml
+#+END_SRC
+Now that you have a secure pod, expose the secure-monolith pod externally using a Kubernetes service.
+
+**** Step 5
+Explore the monolith service configuration file.
+#+BEGIN_SRC bash
+cat services/monolith.yaml
+#+END_SRC
+The file contains:
+
+- The selector that finds and exposes pods with labels app=monolith and secure=enabled
+- targetPort and nodePort that forward external traffic from port 31000 to nginx on port 443.
+**** Step 6
+Use the kubectl create command to create the monolith service from the monolith service configuration file.
+#+BEGIN_SRC bash
+kubectl create -f services/monolith.yaml
+#+END_SRC
+The type: NodePort in the Service's yaml file means that it uses a port on each cluster node to expose the service. This means that it's possible to have port collisions if another app tries to bind to port 31000 on one of your servers.
+
+Normally, Kubernetes handles this port assignment for you. In this lab, you chose one so that it's easier to configure health checks later.
+
+**** Step 7
+Use the gcloud compute firewall-rules command to allow traffic to the monolith service on the exposed nodeport.
+#+BEGIN_SRC bash
+gcloud compute firewall-rules create allow-monolith-nodeport --allow=tcp:31000
+#+END_SRC
+Now that everything is set up, you should be able to test the secure-monolith service from outside the cluster without using port forwarding.
+
+**** Step 8
+Get an IP address for one of your nodes.
+#+BEGIN_SRC bash
+gcloud compute instances list
+#+END_SRC
+**** Step 9
+Try to open the URL in your browser.
+#+BEGIN_SRC bash
+https://<EXTERNAL_IP>:31000
+#+END_SRC
+That timed out or refused to connect. What's going wrong?
+
+It's time for a quick knowledge check. Use the following commands to answer the questions below.
+
+kubectl get services monolith
+
+kubectl describe services monolith
+
+Questions:
+
+- Why can't you get a response from the monolith service?
+- How many endpoints does the monolith service have?
+- What labels must a pod have to be picked up by the monolith service?
+
+*** Adding Labels to Pods
+Currently the monolith service does not have any endpoints. One way to troubleshoot an issue like this is to use the kubectl get pods command with a label query.
+
+**** Step 1
+Determine that there are several pods running with the monolith label.
+#+BEGIN_SRC bash
+kubectl get pods -l "app=monolith"
+#+END_SRC
+**** Step 2
+But what about app=monolith and secure=enabled?
+#+BEGIN_SRC bash
+kubectl get pods -l "app=monolith,secure=enabled"
+#+END_SRC
+Notice that this label query does not print any results. You need to add the "secure=enabled" label to them.
+
+**** Step 3
+Use the kubectl label command to add the missing secure=enabled label to the secure-monolith pod.
+#+BEGIN_SRC bash
+kubectl label pods secure-monolith 'secure=enabled'
+#+END_SRC
+**** Step 4
+Check to see that your labels are updated.
+#+BEGIN_SRC bash
+kubectl get pods secure-monolith --show-labels
+#+END_SRC
+**** Step 5
+View the list of endpoints on the monolith service.
+#+BEGIN_SRC bash
+kubectl get endpoints monolith
+#+END_SRC
+And you have one!
+
+**** Step 6
+Test this by testing one of your nodes again.
+#+BEGIN_SRC bash
+gcloud compute instances list | grep gke-
+#+END_SRC
+Open the following URL in your browser. You will need to click through the SSL warning because secure-monolith is using a self-signed certificate.
+#+BEGIN_SRC bash
+https://<EXTERNAL_IP>:31000
+#+END_SRC
+
+*** End the lab
+Congratulations!
+
+You learned about Kubernetes services and how pod endpoints are selected using labels. You also learned about Kubernetes volumes and how to configure applications using ConfigMaps and secrets.
+ 
+
+* Quiz & Summary 2: Kubernetes Basics
+
+** Why use Kubernetes (i.e. what benefit does it provide to containers?)
+- It reduces the amount of overhead when deploying containers by eliminating redundant data sources and networking interfaces.
+- [It provides a set of APIs that you can use to deploy containers on a set of nodes.]
+- It allows you to define contents of containers with commands like FROM, COPY, RUN, and CMD.
+
+** What does a pod specify?
+- [A set of containers sharing networking and storage.]
+- How many nodes should be running at a given time.
+- How many containers should be running at a given time.
+- A set of nodes sharing a common set of containers.
+
+** Which component do you use to send requests to API servers on masters to configure the cluster?
+- kubelet
+- kube-config
+- [kubectl]
+- kube-proxy
+
+** Summary
+In this lesson, you learned the concepts of how Kubernetes and Container Engine run and scale applications on a number of machines. You can also run a number of applications on the same set of machines. 
+
+
+* Deployments and Rolling Updates
+
+**** Deployments and Roling Updates
+Part of the advantage of container based applications is the ability to break them up and connect them as services. Another is to keep development, staging, and production as similar as possible, so you can migrate between them with little or no change. For this Kubernetes adds tools called deployments and replica sets that allow you to separate and manage your build and run environments and scale them as needed. With these tools you can easily roll out common deployment such as rolling updates, canaries, and blue, greens. Now, let's take a look at what you can do. >> Let's keep on talking about Deploying Kubernetes. Deploying Kubernetes and rolling updates. One of the really, really awesome parts about Kubernetes is that, okay? So let's talk a little bit about it, okay? Deployments really rely on ReplicaSets to manage and run the pod. Deployments allow you to basically name a set of pods to ensure that the number and the state of the pods run and in an equal manner and desired number of states of pods that you have indicated within your YAML file or your configuration itself, okay? Behind the scene, what happens is the deployment relies on these ReplicaSets to manage and run any given number of pods at any given time. In this example that you see right here, there's a deployment that says, hello. When you create the deployment, it's going to create a ReplicaSet, equal size 3. When you add the label selector on there, app equals hello, it'll say inside the pod, you have a single image and you call it hello1, simple example. As the deployment is monitored, the cluster, you'll see whether anything is going on, whether it's different and how it's defined. And if there's anything that's different, the deployment tries to rectify it. In this example on the left-hand side, you'll see that it says ReplicaSet, 4 replicas, selector, and the application again, hello. For the example, it creates a deployment with replicas of 4, like it says there on the left hand side. Only three replicas will be running. The deployment objects and the differences between them will be defined in the API. And what's running in the cluster will be defined and rectified if it needs to by running another pod somewhere else in the same cluster. If you have three pods and one of them goes down or for some reason something happens, remember we talked about being unhealthy, okay? Then the node went down, and there was a problem with the node. It upgrades it, and takes it down by the system. And then finally, another pod will be generated and rebuilt somewhere else with the original state, the original segment. So it will keep three pods running, or three replicas, better yet, running at all times as you can see. Again, rolling updates is one of the really, really awesome things, and developers love this, okay? Rolling updates, well, they allow you to granularly update and gradually update one image version to another image of the version without any disruption to production. Deployment really rolls out and triggers only if it meets the deployment and it meets the pod template. And then yes, it changes the version. For example, if you have labels or containers images, templates and updates, the update will roll over and scale the deployment. And you don't need to trigger any roll out, it'll do it basically on its own. So we're going to use kubectl itself to command and apply these changes to the pods. And you're going to give the pod two versions to the images, so the pods as you could see, you have one ReplicaSet on one side. They're both, one left hand side is hello1, right hand side is hello2. And then the deployment is going to create a second ReplicaSet, like I said, hello2, and then create the pods and the second ReplicaSet. As it shuts down the pods in the old ReplicaSet, it'll keep on doing the same thing to the new ReplicaSet. And now we have a completely new version of an application rolled out, it did this during production. All the APIs were requested and changed, and the deployment now is sitting on version two instead of version one, and no service interruption again. Nobody knew about it. It really happens under the covers, very well done. 
+
+
+**** screen1
+
+* Canary and Blue-Green Deployments
+
+**** Canary and Blue-Green Deployments
+Carrying on with Deploying to Kubernetes, Part 2: Canary and Blue-Green deployments. All right, so a Canary deployment relies on a service to load-balance the traffic to primarily pods based on a label selector. Remember we said labels were not only used for finding stuff but also from the mechanism within Kubernetes. In this case you have the services pointing to a deployment that has the same services running on the label called app: hello, okay? It's going to load-balance anything that comes in here, anything to the pods within that application with that label. 
+
+Once you deploy, you have a second deployment that also adds a second label. And you could call this on track: canary, okay? In this case, since it's a second deployment, it also has an app: hello on it. And the services also has a load-balance against those pods. You can also try a new version of your application against a smaller subset of your live production environment while using the canary deployment also. And then if you're satisfied with all this and everything looks good, you could roll out the new deployment. And finally, the Blue-Green deployment switches all the traffic from one deployment to the other, again, no interruption. So in this case, you have one deployment with pod labelled app: hello, version 1.0.0. And the service has all the traffic to these pods and then, now you have the new, full new deployment with the new version on it. We're going to roll it out. It's going to be full, second deployment with labels, and the label's going to be app: hello, app version: 2.0.0. So we've upgraded to the app version. As we verified the deployment, we make sure that everything inside is running the way it needs to be running, that all the pods are in a healthy states. And then, finally, what we do is we transfer the services, as soon as we know that everything is running perfectly. And then you are a back up on a new version of the application. It switches all the traffic over to the new pod. Again, no service interruption, nobody sees any interruption in the service and just keeps on going. 
+
+In this lab, you'll experiment with deployment obvious and build the three types of deployments discussed in the presentation.
+**** screen1
+
+* LAB 3: Kubernetes Basics
+** Lab: Deploying to Kubernetes
+*** Overview
+The goal of this lab is to get you ready for scaling and managing containers in production.
+
+And that's where deployments https://kubernetes.io/docs/concepts/workloads/controllers/deployment/ come in. Deployments are a declarative way to ensure that the number of pods running is equal to the desired number of pods specified by the user.
+
+*** Introduction to Deployments
+Deployments abstract away the low level details of managing pods. They provide a single stable name that you can use to update an application. Behind the scenes, deployments rely on ReplicaSets https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/ to manage starting, stopping, scaling, and restarting the pods if they happen to go down for some reason. If pods need to be updated or scaled, the deployment will handle all of the details for you.
+
+Deployments (and ReplicaSets) are powered by control loops. Control loops are a design pattern for distributed software that allows you to declaratively define your desired state and have the software implement the desired state for you based on the current state. You'll see more about how that works below.
+
+*** Setup
+**** Step 1
+Make sure you have enough time to complete the lab, and click  .
+
+Click Open Google Console, and sign in with your Qwiklab credentials.
+
+IMPORTANT: Do not use previous lab credentials or personal Google or Gmail credentials or you will encounter errors or significant charges.
+
+**** Step 2
+Make sure the following APIs are enabled in Cloud Platform Console:
+
+- Google Kubernetes Engine API
+- Google Container Registry API
+To do this, go to APIs & Services and scroll down the list of APIs and confirm they are enabled. If not, click ENABLE API AND SERVICES, search for them by name, and enable them.
+
+**** Step 3
+Open Cloud Shell by clicking the Activate Cloud Shell icon  .
+
+Set your zone by running the following command, substituting your zone for <your-zone>.
+
+Use an assigned zone if you have one.
+#+BEGIN_SRC bash
+gcloud config set compute/zone <your-zone>
+#+END_SRC
+**** Step 4
+Get the sample code for creating and running containers and deployments:
+#+BEGIN_SRC bash
+git clone https://github.com/googlecodelabs/orchestrate-with-kubernetes.git
+#+END_SRC
+**** Step 5
+Start your Kubernetes cluster with 5 nodes.
+#+BEGIN_SRC bash
+cd orchestrate-with-kubernetes/kubernetes
+#+END_SRC
+#+BEGIN_SRC bash
+gcloud container clusters create bootcamp --num-nodes 5 --scopes "https://www.googleapis.com/auth/projecthosting,storage-rw"
+#+END_SRC
+Your environment is ready!
+
+*** Learn About Deployment Objects
+**** Step 1
+Run the explain command in kubectl to tell you about the deployment object.
+#+BEGIN_SRC bash
+kubectl explain deployment
+#+END_SRC
+
+**** Step 2
+Run the command with the --recursive option to see all of the fields.
+#+BEGIN_SRC bash
+kubectl explain deployment --recursive
+#+END_SRC
+**** Step 3
+Use the explain command as you go through the lab to help you understand the structure of a deployment object and understand what the individual fields do.
+#+BEGIN_SRC bash
+kubectl explain deployment.metadata.name
+#+END_SRC
+*** Create a Deployment
+Create a simple deployment.
+
+**** Step 1
+Examine the deployment configuration file.
+#+BEGIN_SRC bash
+cat deployments/auth.yaml
+#+END_SRC
+kubectl create will create the auth deployment with one replica, using version 1.0.0 of the auth container. To scale the number of pods, you simply change the replicas field.
+
+**** Step 2
+Create the deployment object using kubectl create.
+#+BEGIN_SRC bash
+kubectl create -f deployments/auth.yaml
+#+END_SRC
+**** Step 3
+Verify that it was created.
+#+BEGIN_SRC bash
+kubectl get deployments
+#+END_SRC
+**** Step 4
+Kubernetes creates a ReplicaSet for the deployment.
+
+Run the following command to verify it. You should see a ReplicaSet with a name like auth-xxxxxxx.
+#+BEGIN_SRC bash
+kubectl get replicasets
+#+END_SRC
+**** Step 5
+Run the following command to view the pods created for your deployment. A single pod was created when the ReplicaSet was created.
+#+BEGIN_SRC bash
+kubectl get pods
+#+END_SRC
+**** Step 6
+With your pod running, it's time to put it behind a service. Use the kubectl create command to create the auth service.
+#+BEGIN_SRC bash
+kubectl create -f services/auth.yaml
+#+END_SRC
+**** Step 7
+Do the same to create and expose the hello and frontend deployments.
+#+BEGIN_SRC bash
+kubectl create -f deployments/hello.yaml
+kubectl create -f services/hello.yaml
+#+END_SRC
+#+BEGIN_SRC bash
+
+kubectl create configmap nginx-frontend-conf --from-file=nginx/frontend.conf
+
+kubectl create secret generic tls-certs --from-file tls/
+
+kubectl create -f deployments/frontend.yaml
+
+kubectl create -f services/frontend.yaml
+#+END_SRC
+
+You created a ConfigMap and secret for the frontend.
+
+**** Step 8
+Interact with the frontend.
+
+Get its external IP.
+
+#+BEGIN_SRC bash
+kubectl get services frontend
+#+END_SRC
+You may need to re-run this command every few seconds until the External IP is populated.
+
+And curl the service.
+#+BEGIN_SRC bash
+curl -ks https://<EXTERNAL-IP>
+#+END_SRC
+
+You get the "hello" response. Use the output templating feature of kubectl to run curl as a one-line command.
+
+#+BEGIN_SRC bash
+curl -ks https://`kubectl get svc frontend -o=jsonpath="{.status.loadBalancer.ingress[0].ip}"`
+#+END_SRC
+
+*** Scale a Deployment
+Update the spec.replicas field to scale the deployment.
+
+**** Step 1
+Run the kubectl explain command to see an explanation of the field.
+#+BEGIN_SRC bash
+kubectl explain deployment.spec.replicas
+#+END_SRC
+**** Step 2
+You can update the replicas field most easily using the kubectl scale command.
+#+BEGIN_SRC bash
+kubectl scale deployment hello --replicas=5
+#+END_SRC
+It may take a minute or so for all the new pods to start up.
+
+**** Step 3
+Kubernetes updates the ReplicaSet and starts new pods to equal 5.
+
+Verify there are 5 pods running.
+#+BEGIN_SRC bash
+kubectl get pods | grep hello- | wc -l
+#+END_SRC
+**** Step 4
+Scale back the application.
+#+BEGIN_SRC bash
+kubectl scale deployment hello --replicas=3
+#+END_SRC
+**** Step 5
+Verify the correct number of pods.
+#+BEGIN_SRC bash
+kubectl get pods | grep hello- | wc -l
+#+END_SRC
+Congratulations!
+
+You learned about Kubernetes deployments and how to manage and scale a group of pods.
+
+*** Rolling Updates
+Deployments update images to new versions through rolling updates. When a deployment is updated with a new version, it creates a new ReplicaSet and slowly increases the number of replicas in the new ReplicaSet as it decreases the replicas in the old ReplicaSet.
+
+Trigger a Rolling Update
+**** Step 1
+Run the following command to update your deployment.
+#+BEGIN_SRC bash
+kubectl edit deployment hello
+#+END_SRC
+**** Step 2
+Change the image in containers section to the following, then save and exit.
+#+BEGIN_SRC 
+containers:
+- name: hello
+  image: kelseyhightower/hello:2.0.0
+#+END_SRC
+The editor uses vi commands:
+
+Use arrow keys to hover over version number 1
+Type r to replace it, and enter 2
+Type :wq! and hit Enter to write and quit the file.
+If you have difficulty and are in a class, ask your instructor for help.
+
+The updated deployment is saved to your cluster and Kubernetes begins a rolling update.
+
+**** Step 3
+You can see the new ReplicaSet that Kubernetes creates.
+#+BEGIN_SRC bash
+kubectl get replicaset
+#+END_SRC
+If you fail to see a new ReplicaSet, make sure you changed the image in containers, and not one of the other references in labels.
+
+**** Step 4
+View the new entry in the rollout history.
+#+BEGIN_SRC bash
+kubectl rollout history deployment/hello
+#+END_SRC
+*** Pause a Rolling Update
+If you detect problems with a running rollout, pause it to stop the update.
+
+**** Step 1
+Pause the update.
+#+BEGIN_SRC bash
+kubectl rollout pause deployment/hello
+#+END_SRC
+**** Step 2
+Verify the current state of the rollout.
+#+BEGIN_SRC bash 
+kubectl rollout status deployment/hello
+#+END_SRC
+**** Step 3
+Verify this with the pods.
+#+BEGIN_SRC bash
+kubectl get pods -o jsonpath --template='{range .items[*]}{.metadata.name}{"\t"}{"\t"}{.spec.containers[0].image}{"\n"}{end}'
+#+END_SRC
+*** Resume a Rolling Update
+The rollout is paused which means that some pods are at the new version and some pods are at the older version.
+
+**** Step 1
+Use the resume command to continue the rollout.
+#+BEGIN_SRC bash
+kubectl rollout resume deployment/hello
+#+END_SRC
+**** Step 2
+Run the status command to verify the rollout is complete.
+#+BEGIN_SRC bash
+kubectl rollout status deployment/hello
+#+END_SRC
+You'll get the following:
+#+BEGIN_SRC 
+deployment "hello" successfully rolled out
+#+END_SRC
+*** Rollback an Update
+If a bug occurs in your new version, users connected to new pods will experience the issue.
+
+**** Step 1
+Use the rollout undo command to roll back to the previous version, then fix any bugs.
+#+BEGIN_SRC bash
+kubectl rollout undo deployment/hello
+#+END_SRC
+**** Step 2
+Verify the rollback in the deployment's history.
+#+BEGIN_SRC bash
+kubectl rollout history deployment/hello
+#+END_SRC
+**** Step 3
+Verify all pods have rolled back to the previous version.
+#+BEGIN_SRC bash
+kubectl get pods -o jsonpath --template='{range .items[*]}{.metadata.name}{"\t"}{"\t"}{.spec.containers[0].image}{"\n"}{end}'
+#+END_SRC
+Congratulations!
+
+You learned how to roll out application updates without downtime.
+
+*** Canary Deployments
+Run a canary deployment to test a new deployment in production with a subset of users. This mitigates risk with new releases.
+
+Create a Canary Deployment
+A canary deployment consists of a separate deployment from your stable deployment and a service that targets them both at the same time.
+
+**** Step 1
+Examine the file that creates a canary deployment for your new version.
+#+BEGIN_SRC bash
+cat deployments/hello-canary.yaml
+#+END_SRC
+It includes the following:
+
+- the deployment hello-canary
+- 1 pod (replica)
+- selectors app: hello and track: canary
+- an image with version 2.0.0.
+
+**** Step 2
+Create the canary deployment.
+#+BEGIN_SRC bash
+kubectl create -f deployments/hello-canary.yaml
+#+END_SRC
+**** Step 3
+After the canary deployment is created, verify you have two deployments hello and hello-canary.
+#+BEGIN_SRC bash
+kubectl get deployments
+#+END_SRC
+The hello service selector uses app: hello, which matches pods in both deployments. However, the canary deployment has fewer pods, and is only used by a subset of users.
+
+*** Verify the Canary Deployment
+You can verify both hello versions being served by requests.
+#+BEGIN_SRC bash
+curl -ks https://`kubectl get svc frontend -o=jsonpath="{.status.loadBalancer.ingress[0].ip}"`/version
+#+END_SRC
+Run the command several times and confirm that hello 1.0.0 serves about ¾ (75%) of requests and 2.0.0 serves about ¼ (25%).
+
+By default, every request has a chance to be served by the canary deployment. If you want users to get all their responses from the same version, enable session affinity in the configuration file as follows:
+
+spec:
+
+sessionAffinity: ClientIP
+
+*** Clean Up
+You're done using the canary deployment.
+
+Delete it and the service as follows.
+#+BEGIN_SRC bash
+kubectl delete deployment hello-canary
+#+END_SRC
+Congratulations!
+
+You learned about canary deployments and how to test new versions of an application in a live environment.
+
+*** Blue-Green Deployments
+You can use blue-green deployments if it's more beneficial to modify load balancers to point to a new, fully-tested deployment all at once.
+
+A downside is you need double the resources to host both versions of your application during the switch.
+
+The Service
+You use the existing hello deployment for the blue version and a new hello-green deployment for the green version.
+
+Deployments have the following label:
+
+| Deployment   | Label Name | Label Value |
+|--------------+------------+-------------|
+| hello (blue) | version    |       1.0.0 |
+| hello-green  | version    |       2.0.0 |
+|              |            |             |
+
+
+You use two nearly-identical service files (hello-blue and hello-green) to switch between versions. The only difference between these files is their version selector. You could edit the service while it's running and change the version selector, but switching files is easier for labs.
+
+First, update the service to use the blue deployment:
+#+BEGIN_SRC bash
+kubectl apply -f services/hello-blue.yaml
+#+END_SRC
+*** Create a Blue-Green Deployment
+**** Step 1
+Create the green deployment.
+#+BEGIN_SRC bash
+kubectl create -f deployments/hello-green.yaml
+#+END_SRC
+**** Step 2
+Verify the blue deployment (1.0.0) is still being used.
+#+BEGIN_SRC bash
+curl -ks https://`kubectl get svc frontend -o=jsonpath="{.status.loadBalancer.ingress[0].ip}"`/version
+#+END_SRC
+**** Step 3
+Run the following command to update the service to use the green deployment.
+#+BEGIN_SRC bash
+kubectl apply -f services/hello-green.yaml
+#+END_SRC
+**** Step 4
+Verify the green deployment is being used.
+#+BEGIN_SRC bash
+curl -ks https://`kubectl get svc frontend -o=jsonpath="{.status.loadBalancer.ingress[0].ip}"`/version
+#+END_SRC
+*** Rollback a Blue-Green Deployment
+You can roll back to the old version.
+
+**** Step 1
+While the green deployment is still running, simply update the service to the old (blue) deployment.
+#+BEGIN_SRC bash
+kubectl apply -f services/hello-blue.yaml
+#+END_SRC
+**** Step 2
+Verify that the blue deployment is being used.
+#+BEGIN_SRC bash
+curl -ks https://`kubectl get svc frontend -o=jsonpath="{.status.loadBalancer.ingress[0].ip}"`/version
+#+END_SRC
+Congratulations!
+
+You learned how to use blue-green deployments to switch application versions all at once.
+
+*** Use the Cluster Dashboard [optional]
+Unrelated to deployments, you can view and interact with cluster resources in a web dashboard rather than the command-line.
+
+To use the dashboard:
+
+- Configure kubectl to communicate with a cluster (already done)
+- Use kubectl to start an HTTP proxy that connects with the Kubernetes API server
+- Point a browser to the proxy to get your cluster's dashboard.
+
+You can use Cloud Shell to do this because kubectl is already running on it. All you have to do is start the proxy and point a browser to the dashboard.
+
+**** Step 1
+Run the following command in Cloud Shell to start the proxy on port 8080.
+#+BEGIN_SRC bash
+kubectl proxy --port=8080
+#+END_SRC
+**** Step 2
+In Cloud Shell's menu bar, click Web Preview > Preview on port 8080 to open a browser pointed to Cloud Shell's port 8080.
+
+
+**** Step 3
+There should be a URL in place of http://localhost:8080 and 'ui' is to be appended to it (it should look like https://8080-dot-3274376-dot-devshell.appspot.com/ui). This displays the dashboard.
+
+For more details, see https://cloud.google.com/kubernetes-engine/docs/oss-ui.
+
+*** End the lab
+
+
+* Quiz & Summary 3: Deploying to Kubernetes
+
+** What is the purpose of the ReplicaSet?
+- To create as few containers as possible.
+- To create a desired number of containers.
+- To create as few nodes as possible.
+- [To create a desired number of pods.]
+
+** When are rolling deployments triggered?
+- If the kubelet stops running and the deployment needs updating.
+- If a client or user requests it via an API call.
+- [If the deployment's pod template changes.]
+- If a ReplicaSet starts more containers.
+
+** How does Kubernetes choose instances in the second deployment of a canary deployment?
+- As instances in the primary deployment stop running, instances in the second deployment are started.
+- The service points to instances in the second deployment with a unique selector.
+- The service uses a random selector to pick instances in both deployments.
+- [The service points to instances in both deployments with a common selector.]
+
+
+
+** Summary
+Now that you know how to declaratively define deployments and have Kubernetes implement the desired state for you, it's time to set this up. 
+
+
+* Creating a Continuous Dilivery Pipeline
+
+** Provisioning Jenkins
+**** Provisioning Jenkins
+One of the greatest advantages of modern applications, like those built with containers, is the ability to keep development staging and production environments similar. This saves considerable time and effort. It also makes it possible to set up continuous delivery, that is, the ability to make changes to your code, stager for testing, and deploy it using one source base. In this module, we'll go through an example of using a continuous delivery tool called Jenkins. Your delivery tool may vary. It's tempting to bypass this module because you may not be interested in using Jenkins. You may think, "I'll look at this later with my own tool." However, the steps are similar, and there are a number of them to get right. If you wait to do this on your own, you may miss a step and not know how to fix it. So it's extremely important to do it at least once and get it working in a controlled environment, even with a tool you're not going to use. Creating a Continuous Delivery Pipeline. We'll be using Jenkins to show you how to provisioning it. Now that you've learned how to deploy the application to Kubernetes, you'll see now how to set up a Continuous Delivery Pipeline. So let's go on. Here's a good example of the flow of Jenkins themselves. So, on the left-hand side, number one box there, you have developers into the green box there. Usually, what they do, they'll check in the code to the repository, which is the top-left blue box, then the changes are picked up by Jenkins. Jenkins then builds a docker image from the source code, middle right blue box, and then deploys that to the developer environment, doing whatever they need in that environment, which is that middle left gray box. And then from there, the developers test and iterate the code, modify the code, and then branch it into an environment similar to their production environment that is not being hit by traffic. Number two is when they verify the code is good, that everything is working correctly, they commit their changes to that different branch. That commits changes to the canary deployment in production on the left-hand side, the big gray box. And as you saw earlier barrier, the canary deployment, you're only spinning up a subset of pods and responding to the portion of live traffic. When that canary deployment or backend has been verified, developers then manage that code to the production or merge that code to the production branch and continue, like I said, with no service interruption. That's picked up by Jenkins. The image can be built and then sent out to the rest of the fleet, the right half of the big grey box, that will serve it out to all the users at that point. Here's how Jenkins gets deployed to Kubernetes. With the container engine, you have a master Jenkins pod. That's the top blue left Node 1. It has two services, one for the user interface, top yellow box, and the second, which is for configuring your pipeline. The other is the discovery service, bottom yellow box. As Jenkins builds or tries to build, it launches also the pods in your cluster, bottom-left blue box in Node 1, and those pods communicate back to the master to figure out what's happening and to flow at the bottom of the yellow box and up to the top-left blue box of Node 1. When the master requests a workload, the pod runs the build steps, and then it tells you, "Hey, terminate it when it's not needed." Jenkins also has a persistent disk, all the way in the bottom, which stores the data, the configuration data. Persistent disk means it's going to stay there and it's going to keep the data it needs for any time it needs to deploy. Jenkins runs through Kubernetes deployment. Jenkins does not have high availability. So you have to run one replica only. You're going to define which image to use, give it a name, define which ports, like we've explained before, define the container, etc. And you're also going to mount your persistent disk that has your configuration data for Jenkins themselves. So, at the bottom of the definition, you'll see the volume, the mount. In this example, it'll be /var/jenkins_home. And that's the path that the inside the container will be using. For ingress, your definition specifications, where your TLS certs are going to be, which is the secret name, the TLS. You are also going to see the service mounts and the load balancer. In this case, the name jenkins-ui. And the ports is going to hit, which is 8080. Jenkins executor defines inside Jenkins. The Kubernetes pod template configuration looks at it, it applies it. In there, you'll say which docker image you want to use. You notice the third field, it'll give you which docker image you want to use and other other aspects that you want to include in here such as the sockets, the node running, type, the build, and so forth. The two bottom right fields, you could see them on the bottom. And also, the volume names also, as you could see. 
+
+**** screen1
+
+** Creating the Pipeline
+**** Creating the Pipeline
+Continuing on with creating a continuous delivery pipeline. Now you've seen how to deploy your applications, you'll create that pipeline itself. So the application usually has a frontend and a backend. The front is usually exposed to the Internet. It could be a web server, backend could be usually a database or something like that. You have the nodes in the backend providing the services in the COOPs and running in one cluster. You build your Jenkins pipeline that defines how you build, test, and deploy. The cycle managed. Jenkins pipeline allows you to create a set of steps, so you create and Jenkins at sells, that'll set up all these resources underneath as you need them set up. And then deploy is a cycle at the end, and that will be completely orchestrated by Kubernetes. 
+
+Here's an example of the Jenkins pipeline file which checks out, builds, tests, pushes, and deploys, the deployment itself. A little explanation, at the top, you'll see the deployment variables. Next, you'll see the check out, the code, and the source code, and who has been managed then configured. The first stage, you'll build an image from that source. The second stage, you'll run and test that image as it has been built. Third stage is you'll finally push that image out. And the fourth stage, if the image is pushed up successfully, it's going to deploy your application using COOP control like I said, which is a baked image into our container environment or our container image. 
+
+Configuring the pipeline as run a few times with different stages, times, statuses, and logs. So you could see that you could pick when you run it, how you run it, and what point in time you run it, what point of day, and different staging also. 
+
+With Canary, you have the same labels across deployment, that's the beauty of it. You'll still have the same portion of your live environment running, but your live environment, you could release it to the Canary deployment for first user testing. With deploying to a Canary, you use the same labels across the deployment. And again, that's the beauty of using labels. Not only searching but here, for deployment, actual functionality. In this case, you use awesome-stuff app label [LAUGH] for the frontend and role label to service for our frontend also. 
+
+But once you have another label to distinguish from the product, you could stage it. But you may also have a label that says, staging. So in this case, you could stage it, you could stage it giving it capacity also, only 90% of the traffic going to the production and only 10% of your traffic going to your staging environment. And basically, that's how you define how much traffic goes between the canary and the deployment environment. 
+
+And now you've seen the overview of how you set up a continuous deployment in Kubernetes using Jenkins application. Next, you'll go through the lab and convert all the details. 
+
+In this lab, you'll setup the development, staging and production environments illustrated in the diagram at the beginning of the lab. One of the reasons for using Jenkins is that it can be quickly deployed in container engine as a Docker image. That may be a little confusing, but just remember that it's its own separate container based application that will be configured and deployed on the same container engine cluster as your test application. You'll start your Kubernetes cluster, provision and deploy Jenkins. And then, set up the test application with its three environments for development, staging, and production. The staging environment is a canary deployment within production. The application mimics a microservice with a frontend and a backend. The front end listens for requests on a port, queries the backend for some information, and then renders the information as a web page. 
+**** screen1
+
+* LAB 4: Continuous Deployment with Jenkins
+
+** IMG - Continuous Deployment with Jenkins
+
+Lab: Continuous Deployment with Jenkins
+** Overview
+This lab shows you how to set up a continuous delivery pipeline using Jenkins and Google Kubernetes Engine as described in the following diagram.
+
+
+** Setup
+**** Step 1
+Make sure you have enough time to complete the lab, and click Start Lab .
+
+Click Open Google Console, and sign in with your Qwiklab credentials.
+
+IMPORTANT Do not use previous lab credentials or personal Google or Gmail credentials, or you will encounter errors or significant charges.
+
+**** Step 2
+Make sure the following APIs are enabled in Cloud Platform Console:
+
+- Google Kubernetes Engine API
+- Google Container Registry API
+To do this, go to APIs & Services and scroll down the list of APIs and confirm that they are enabled. If not, click ENABLE API AND SERVICES, search for them by name, and enable them.
+
+**** Step 3
+1. In the upper-right, click Activate Google Cloud Shell ().
+2. Run the following command to set your zone. Substitute your assigned zone for <your-zone> if you have one. Otherwise, use a zone close to you for low latency.
+#+BEGIN_SRC bash
+gcloud config set compute/zone <your-zone>
+#+END_SRC
+**** Step 4
+A Git repository contains Kubernetes manifests that deploy Jenkins. The manifests and their settings are described in Configuring Jenkins for Kubernetes Engine. https://cloud.google.com/solutions/configuring-jenkins-kubernetes-engine
+
+Run the following command to get the sample code.
+#+BEGIN_SRC 
+git clone https://github.com/GoogleCloudPlatform/continuous-deployment-on-kubernetes.git
+#+END_SRC
+**** Step 5
+Start your Kubernetes cluster with 5 nodes.
+#+BEGIN_SRC bash
+cd continuous-deployment-on-kubernetes
+#+END_SRC
+
+#+BEGIN_SRC bash
+gcloud container clusters create bootcamp --num-nodes 5 --scopes "https://www.googleapis.com/auth/projecthosting,storage-rw"
+#+END_SRC
+Your environment is ready!
+
+** Provision Jenkins
+*** Create the Jenkins home volume
+You need a disk volume to pre-populate Jenkins with configurations discussed in Jenkins on Kubernetes Engine. Kubernetes Engine will mount this volume into your Jenkins pod.
+
+These steps can take up to several minutes to complete.
+
+**** Step 1
+Run the following command to create a disk image for a virtual machine from the supplied tarball:
+#+BEGIN_SRC bash
+gcloud compute images create jenkins-home-image --source-uri https://storage.googleapis.com/solutions-public-assets/jenkins-cd/jenkins-home-v3.tar.gz
+#+END_SRC
+**** Step 2
+Create a persistent disk from the disk image.
+#+BEGIN_SRC bash
+gcloud compute disks create jenkins-home --image jenkins-home-image
+#+END_SRC
+*** Configure Jenkins credentials
+You need to enable authentication for the Jenkins UI.
+
+**** Step 1
+Create a random password. Take note of the password for use later in the lab.
+#+BEGIN_SRC bash
+export PASSWORD=`openssl rand -base64 15`; echo "Your password is $PASSWORD"; sed -i.bak s#CHANGE_ME#$PASSWORD# jenkins/k8s/options
+#+END_SRC
+**** Step 2
+Create a Kubernetes namespace https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ for Jenkins. Namespaces allow you to use the same resource manifests across multiple environments without needing to give resources unique names. You will include this namespace as a parameter to the commands you send to Kubernetes.
+#+BEGIN_SRC bash
+kubectl create ns jenkins
+#+END_SRC
+**** Step 3
+Create a Kubernetes secret https://kubernetes.io/docs/concepts/configuration/secret/. Kubernetes uses this object to provide Jenkins with the default username and password when Jenkins boots.
+#+BEGIN_SRC bash
+kubectl create secret generic jenkins --from-file=jenkins/k8s/options --namespace=jenkins
+#+END_SRC
+**** Step 4
+Add yourself as a cluster administrator in the cluster's RBAC so that you can give Jenkins permissions in the cluster:
+#+BEGIN_SRC bash
+kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=$(gcloud config get-value account)
+#+END_SRC
+*** Deploy Jenkins
+In this section, you'll create a Jenkins deployment and services based on the Kubernetes resources defined in the jenkins/k8s folder of the sample code.
+
+The kubetcl apply command creates a Jenkins deployment that contains a container for running Jenkins and a persistent disk that contains the Jenkins home directory. Keeping the home directory on the persistent disk ensures that your critical configuration data is maintained, even if the pod running your Jenkins master goes down.
+
+The kubetcl apply command also creates two services that enable your Jenkins master to be accessed by other pods in the cluster:
+
+A NodePort service https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport on port 8080 that allows pods and external users to access the Jenkins user interface. This type of service can be load balanced by an HTTP Load Balancer.
+A ClusterIP service https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services---service-types on port 50000 that the Jenkins executors use to communicate with the Jenkins master from within the cluster.
+**** Step 1
+Create the Jenkins deployment and services.
+#+BEGIN_SRC bash
+kubectl apply -f jenkins/k8s/
+#+END_SRC
+
+**** Step 2
+Confirm that the pod is running. Look for Running in the STATUS column.
+#+BEGIN_SRC bash
+kubectl get pods -w -n jenkins
+#+END_SRC
+
+*** Configure HTTP load balancing
+Create an ingress resource https://kubernetes.io/docs/concepts/services-networking/ingress/ that manages the external load balancing of the Jenkins user interface service. The ingress resource also acts as an SSL terminator to encrypt communication between users and the Jenkins user interface service.
+
+**** Step 1
+Confirm that the services are set up correctly by listing the services in the Jenkins namespace. Confirm that jenkins-discovery and jenkins-ui display. If not, ensure the steps above were all run.
+#+BEGIN_SRC bash
+kubectl get svc -n jenkins
+#+END_SRC
+
+
+**** Step 2
+Create an SSL certificate and key.
+#+BEGIN_SRC bash
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /tmp/tls.key -out /tmp/tls.crt -subj "/CN=jenkins/O=jenkins"
+#+END_SRC
+**** Step 3
+Upload the certificate to Kubernetes as a secret. https://kubernetes.io/docs/concepts/configuration/secret/
+#+BEGIN_SRC bash
+kubectl create secret generic tls --from-file=/tmp/tls.crt --from-file=/tmp/tls.key -n jenkins
+#+END_SRC
+**** Step 4
+Create the HTTPS load balancer using an ingress. https://kubernetes.io/docs/concepts/services-networking/ingress/
+#+BEGIN_SRC bash
+kubectl apply -f jenkins/k8s/lb/ingress.yaml
+#+END_SRC
+*** Connect to Jenkins
+**** Step 1
+Check the status of the load balancer's health checks using the following command:
+#+BEGIN_SRC bash
+kubectl describe ingress jenkins --namespace jenkins
+#+END_SRC
+
+Repeat this step until you see the backends field display HEALTHY.
+
+
+It can take several minutes for these steps to complete. On rare occasions, it has taken up to 25 minutes.
+
+**** Step 2
+Once your backends are healthy, you can get the Jenkins URL by running the following command.
+#+BEGIN_SRC bash
+echo "Jenkins URL: https://`kubectl get ingress jenkins -n jenkins -o jsonpath='{.status.loadBalancer.ingress[0].ip}'`"; echo "Your username/password:  jenkins/$PASSWORD"
+#+END_SRC
+
+**** Step 3
+Visit the URL from the previous command in your browser and log in with the credentials displayed.
+
+You are using a self-signed certificate, so you will likely get a warning. Accept the risk and continue to the page.
+
+If you get a system error, the backend service may not be fully functional yet. Go back a couple steps and rerun the kubectl describe ingress command until you see the backends field display HEALTHY.
+
+
+
+Congratulations!
+
+Jenkins is set up in your cluster. You will use Jenkins to drive your automated CI/CD pipelines in the next sections.
+
+** Understand the application
+You'll deploy the sample application, gceme, in your continuous deployment pipeline. The application is written in the Go language and is located in the repo's sample-app directory. When you run the gceme binary on a Compute Engine instance, the app displays the instance's metadata in an info card as follows:
+
+The application mimics a microservice by supporting two operation modes.
+
+- In backend mode, gceme listens on port 8080 and returns Compute Engine instance metadata in JSON format.
+- In frontend mode, gceme queries the backend gceme service and renders the resulting JSON in the user interface.
+
+
+** Deploy the application
+You will deploy the application into two different environments:
+
+- Production: The live site that your users access.
+- Canary: A smaller-capacity site that receives only percentage of your user traffic. Use this environment to validate your software with live traffic before it's released to all of your users.
+**** Step 1
+In Google Cloud Shell, navigate to the sample application directory.
+#+BEGIN_SRC bash
+cd sample-app
+#+END_SRC
+**** Step 2
+Create the Kubernetes namespace to logically isolate the deployment.
+#+BEGIN_SRC bash
+kubectl create ns production
+#+END_SRC
+**** Step 3
+Create the production and canary deployments and services using the kubectl apply commands.
+#+BEGIN_SRC bash
+kubectl apply -f k8s/production -n production
+#+END_SRC
+#+BEGIN_SRC bash
+kubectl apply -f k8s/canary -n production
+#+END_SRC
+#+BEGIN_SRC bash
+kubectl apply -f k8s/services -n production
+#+END_SRC
+**** Step 4
+Scale up the production environment frontends. By default, only one replica of the frontend is deployed. Use the kubectl scale command to ensure that you have at least 4 replicas running at all times.
+#+BEGIN_SRC bash
+kubectl scale deployment gceme-frontend-production -n production --replicas 4
+#+END_SRC
+**** Step 5
+Confirm that you have 5 pods running for the frontend: 4 for production traffic and 1 for canary releases. This means that changes to your canary release will only affect 1 out of 5 (20%) of users. You should also have 2 pods for the backend: 1 for production and 1 for canary.
+#+BEGIN_SRC bash
+kubectl get pods -n production -l app=gceme -l role=frontend
+#+END_SRC
+#+BEGIN_SRC bash
+kubectl get pods -n production -l app=gceme -l role=backend
+#+END_SRC
+**** Step 6
+Retrieve the external IP for the production services.
+
+It can take several minutes before you see the load balancer external IP address.
+#+BEGIN_SRC bash
+kubectl get service gceme-frontend -n production
+#+END_SRC
+
+**** Step 7
+Store the frontend service load balancer IP in an environment variable for use later.
+#+BEGIN_SRC bash
+export FRONTEND_SERVICE_IP=$(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip}"  --namespace=production services gceme-frontend)
+#+END_SRC
+**** Step 8
+Confirm that both services are working by opening the frontend external IP address in your browser.
+
+**** Step 9
+Check the version output of the service by hitting the /version path. It should read 1.0.0.
+#+BEGIN_SRC bash
+curl http://$FRONTEND_SERVICE_IP/version
+#+END_SRC
+Congratulations!
+
+You have successfully deployed the sample application! Next you will set up a pipeline for deploying your changes continuously and reliably.
+
+** Create the Jenkins pipeline
+*** Create a Repository to host the sample app source code
+**** Step 1
+Create a copy of the gceme sample app and push it to Cloud Source Repositories.
+https://cloud.google.com/source-repositories/docs/
+**** Step 2
+Initialize the sample-app directory as its own Git repository.
+#+BEGIN_SRC bash
+gcloud alpha source repos create default
+#+END_SRC
+#+BEGIN_SRC bash
+git init
+#+END_SRC
+#+BEGIN_SRC bash
+git config credential.helper gcloud.sh
+#+END_SRC
+**** Step 3
+Replace [PROJECT_ID] with your current project ID in the following command. To find your current project ID you can run gcloud config list project.
+#+BEGIN_SRC bash
+git remote add origin https://source.developers.google.com/p/[PROJECT_ID]/r/default
+#+END_SRC
+**** Step 4
+Set the username and email address for your Git commits. Replace [EMAIL_ADDRESS] with your Git email address. Replace [USERNAME] with your Git username.
+#+BEGIN_SRC bash
+git config --global user.email "[EMAIL_ADDRESS]"
+#+END_SRC
+#+BEGIN_SRC bash
+git config --global user.name "[USERNAME]"
+#+END_SRC
+**** Step 4
+Add, commit, and push the files.
+#+BEGIN_SRC bash
+git add .
+#+END_SRC
+#+BEGIN_SRC bash
+git commit -m "Initial commit"
+#+END_SRC
+#+BEGIN_SRC bash
+git push origin master
+#+END_SRC
+
+*** Add your service account credentials
+Configure your credentials to allow Jenkins to access the code repository. Jenkins will use your cluster's service account credentials in order to download code from the Cloud Source Repositories.
+
+**** Step 1
+In the Jenkins user interface, click Jenkins > Credentials in the left navigation.
+
+**** Step 2
+Click Jenkins in the top group. 
+
+**** Step 3
+Click Global Credentials.
+
+**** Step 4
+Click Add Credentials in the left navigation.
+
+**** Step 5
+Select Google Service Account from metadata from the Kind drop-down.
+
+**** Step 6
+Click OK.
+
+**** Step 7
+There are now two global credentials. Make a note of the second credential's name for use later on in this tutorial.
+
+
+
+*** Create the Jenkins job
+Navigate to your Jenkins user interface and configure a Pipeline job.
+
+**** Step 1
+Click the Jenkins link in the top left of the interface.
+
+
+**** Step 2
+Click the New Item link in the left navigation.
+
+**** Step 3
+Enter an item name sample-app, then choose the Multibranch Pipeline option and click OK.
+
+**** Step 4
+On the next page, click Add Source and select git.
+
+**** Step 5
+Paste the HTTPS clone URL of your sample-app repo in Cloud Source Repositories into the Project Repository field. Replace [PROJECT_ID] with your project ID.
+#+BEGIN_SRC bash
+https://source.developers.google.com/p/[PROJECT_ID]/r/default
+#+END_SRC
+**** Step 6
+From the Credentials drop-down, select the name of the credentials you created when adding your service account in the previous steps.
+
+**** Step 7
+Under Build Triggers, select the checkbox Build Periodically, and enter five asterisks (* * * * *) into the Schedule field. This ensures that Jenkins checks your code repository for changes once every minute. This field uses the CRON expression https://en.wikipedia.org/wiki/Cron#CRON_expression syntax to define the schedule.
+
+Enter five asterisks with a space between each asterisk and NO braces. Then click outside the text box so Jenkins checks the format of your entry. You should get a message asking if you mean "every minute". If so, your format is correct.
+
+**** Step 8
+Your job configuration should look like this:
+
+
+**** Step 9
+Click Save.
+
+After you complete these steps, a job named "Branch indexing" runs. This meta-job identifies the branches in your repository and ensures changes haven't occurred in existing branches. If you click sample-app in the top left, the master job should be seen.
+
+The first run of the master job fails until you make a few code changes in the next step.
+
+Congratulations!
+
+You have successfully created a Jenkins pipeline. Next you will create the development environment for continuous integration.
+
+** Create the development environment
+Development branches are a set of environments your developers use to test their code changes before submitting them for integration into the live site. These environments are scaled-down versions of your application, but need to be deployed using the same mechanisms as the live environment.
+
+*** Create a development branch
+To create a development environment from a feature branch, you can push the branch to the Git server and let Jenkins deploy your environment.
+
+Create a development branch and push it to the Git server.
+#+BEGIN_SRC bash
+git checkout -b new-feature
+#+END_SRC
+*** Modify the pipeline definition
+The Jenkinsfile that defines that pipeline is written using the Jenkins Pipeline Groovy syntax https://jenkins.io/doc/book/pipeline/. Using a Jenkinsfile allows an entire build pipeline to be expressed in a single file that lives alongside your source code. Pipelines support powerful features like parallelization and requiring manual user approval.
+
+In order for the pipeline to work as expected, you need to modify the Jenkinsfile to set your project ID.
+
+**** Step 1
+Open the Jenkinsfile in your favorite terminal editor. For example using Vi.
+#+BEGIN_SRC bash
+vi Jenkinsfile
+#+END_SRC
+**** Step 2
+Replace REPLACE_WITH_YOUR_PROJECT_ID with your project ID. To get your project ID, run gcloud config get-value project
+#+BEGIN_SRC 
+def project = 'REPLACE_WITH_YOUR_PROJECT_ID'
+def appName = 'gceme'
+def feSvcName = "${appName}-frontend"
+def imageTag = "gcr.io/${project}/${appName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
+#+END_SRC
+**** Step 3
+Save the file and exit the editor. In Vi, type <esc> then :wq and <enter>.
+
+*** Modify the site
+In order to demonstrate changing the application, you will be change the gceme cards from blue to orange.
+
+**** Step 1
+Open html.go for editing and replace the two instances of the word blue with the word orange.
+
+This will change the format of the cards from blue to orange.
+
+**** Step 2
+Open main.go and change the version number from 1.0.0 to 2.0.0. The version is defined in this line:
+
+const version string = "2.0.0"
+
+*** Kick off deployment
+**** Step 1
+Commit and push your changes. This will kick off a build of your development environment.
+#+BEGIN_SRC bash
+git add Jenkinsfile html.go main.go
+#+END_SRC
+#+BEGIN_SRC bash
+git commit -m "Version 2.0.0"
+#+END_SRC
+#+BEGIN_SRC bash
+git push origin new-feature
+#+END_SRC
+**** Step 2
+After the change is pushed to the Git repository, navigate to the Jenkins user interface where you can see that your build started for the new-feature branch (bottom-left in navigation pane). It can take up to a minute for the changes to be picked up and start displaying.
+
+
+
+**** Step 3
+After the build is running, click the down arrow next to the build in the left navigation (to see the down-arrow, hover over the #1 or #2 or #3 text link next to the red "x" icon) and select Console Output.
+
+
+
+**** Step 4
+Track the output of the build for a few minutes and watch for the kubectl --namespace=new-feature apply... messages to begin. Your new-feature branch will now be deploying to your cluster.
+
+In a development scenario, you wouldn't use a public-facing load balancer. To help secure your application, you can use kubectl proxy. The proxy authenticates itself with the Kubernetes API and proxies requests from your local machine to the service in the cluster without exposing your service to the Internet.
+
+**** Step 5
+Start the proxy in the background.
+#+BEGIN_SRC bash
+kubectl proxy &
+#+END_SRC
+**** Step 6
+Verify that your application is accessible by sending a request to localhost and letting kubectl proxy forward it to your service. You should see it respond with 2.0.0, which is the version that is now running.
+#+BEGIN_SRC bash
+curl http://localhost:8001/api/v1/proxy/namespaces/new-feature/services/gceme-frontend:80/version
+#+END_SRC
+Congratulations!
+
+You have set up the development environment. Next you will build on what you learned in the previous module on Deploying to Kubernetes to deploy a canary release to test out a new feature.
+
+** Deploy a Canary release
+Now that you have verified that your app is running your latest code in the development environment, deploy that code to the canary environment.
+
+**** Step 1
+Create a canary branch and push it to the Git server.
+#+BEGIN_SRC bash
+git checkout -b canary
+#+END_SRC
+#+BEGIN_SRC bash
+git push origin canary
+#+END_SRC
+**** Step 2
+In Jenkins, you should see the canary pipeline has kicked off.
+
+
+
+Once complete, you can check the service URL to ensure that some of the traffic is being served by your new version. You should see about 1 in 5 requests returning version 2.0.0 (let it run about 15-20 times).
+#+BEGIN_SRC bash
+export FRONTEND_SERVICE_IP=$(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip}" --namespace=production services gceme-frontend)
+#+END_SRC
+#+BEGIN_SRC bash
+while true; do curl http://$FRONTEND_SERVICE_IP/version; sleep 1;  done
+#+END_SRC
+You can stop this command by pressing Ctrl-C.
+
+Congratulations!
+
+You have deployed a canary release. Next you will deploy the new version to production.
+
+** Deploy to production
+Now that your canary release was successful and you haven't heard any customer complaints, you can deploy to the rest of your production fleet.
+
+**** Step 1
+Merge the canary branch and push it to the Git server.
+#+BEGIN_SRC bash
+git checkout master
+#+END_SRC
+#+BEGIN_SRC bash
+git merge canary
+#+END_SRC
+#+BEGIN_SRC bash
+git push origin master
+#+END_SRC
+**** Step 2
+In Jenkins, you should see the master pipeline has kicked off. Once complete, you can check the service URL to ensure that all of the traffic is being served by your new version, 2.0.0.
+#+BEGIN_SRC bash
+export FRONTEND_SERVICE_IP=$(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip}" --namespace=production services gceme-frontend)
+#+END_SRC
+#+BEGIN_SRC bash
+while true; do curl http://$FRONTEND_SERVICE_IP/version; sleep 1;  done
+#+END_SRC
+**** Step 3
+You can stop this command by pressing Ctrl-C.
+
+**** Step 4
+You can also navigate to the site using your browser to see your orange cards.
+
+Get the front end service IP
+#+BEGIN_SRC bash
+echo $FRONTEND_SERVICE_IP
+#+END_SRC
+Enter the front end service IP in your browser address field
+#+BEGIN_SRC bash
+http://$FRONTEND_SERVICE_IP
+#+END_SRC
+You should see output like the following
+
+
+
+Congratulations!
+
+You have successfully deployed your application to production!
+
+** End the lab
+
+
+* Quiz & Summary 4: Continuous Deployment with Jenkins 
+
+** Why is it useful to set up continuous delivery with Kubernetes?
+- [Continuous delivery is one of the main advantages of containers because containers are so portable.]
+- Continuous delivery operates similarly to traditional build and test environments.
+- Continuous delivery saves time configuring containers because containers can be started and stopped programmatically.
+
+** Which 3 deployments are used in our instance of Kubernetes continuous delivery?
+- [Development, canary, and production.]
+- Development, beta, and general availability.
+- Development, test, and release.
+
+** Which of the following best describes why we used Jenkins for continous delivery with Kubernetes?
+- No particular reason.
+- It may be required for certain features to work properly.
+- [You can use any tool, but it's good to try one that's well documented in a controlled environment first.]
+
+** Summary
+As you've seen, software development and release is simpler and more automated in the cloud, where hardware and networking are provided as services. And software dependencies can be downloaded as machines are spun up. 
+
+Next steps might be to try to build applications on your own, and continue with your education on our website. We hope you enjoyed this course, and found it useful and efficient. Please feel free to provide us feedback. 
+Downloads
+
+
+* Related Courses on Coursera
+** Related Courses
+
+Elastic Cloud Infrastructure: Scaling and Automation
+Google Cloud
+
+Essential Cloud Infrastructure: Core Services
+Google Cloud
+
+Elastic Cloud Infrastructure: Containers and Services
+Google Cloud
+
+Essential Cloud Infrastructure: Foundation
+Google Cloud
+
+Reliable Cloud Infrastructure: Design and Process
+Google Cloud
+
+* Notes
+Your password is yw7xCPQ2l103zxH5mbY8
+
+
+qwiklabs-gcp-04dec42e619289dc
+
+Jenkins URL: https://35.241.48.139
+Your username/password:  jenkins/yw7xCPQ2l103zxH5mbY8
